@@ -23,5 +23,6 @@ public interface UserService {
     List<Role> listRoles();
 
     UserDetails loadUserByUsername(String username);
+    void svUser(User user);
 
 }

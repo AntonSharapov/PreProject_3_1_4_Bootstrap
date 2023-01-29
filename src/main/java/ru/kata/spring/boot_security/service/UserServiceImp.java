@@ -101,4 +101,11 @@ public class UserServiceImp implements UserDetailsService, UserService {
         }
         return user;
     }
+
+    @Override
+    public void svUser(User user) {
+        user.setUsername(user.getUsername());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
 }

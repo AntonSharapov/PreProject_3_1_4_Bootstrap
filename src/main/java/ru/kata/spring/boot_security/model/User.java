@@ -25,6 +25,17 @@ public class User implements UserDetails {
     private int salary;
     private String username;
     private String password;
+
+    public User(String name, String surname, String email, int salary, String username, String password, Set<Role> roles) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.salary = salary;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
     @Transient
     private String passwordConfirm;
     @ManyToMany(fetch = FetchType.LAZY)
