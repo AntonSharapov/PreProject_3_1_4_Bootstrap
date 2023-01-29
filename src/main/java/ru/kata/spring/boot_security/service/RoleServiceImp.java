@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.service;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.model.Role;
 import ru.kata.spring.boot_security.repository.RoleRepository;
+
 @Service
 public class RoleServiceImp implements RoleService {
     private RoleRepository roleRepository;

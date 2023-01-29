@@ -10,47 +10,43 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsService userDetailsService;
-    private final SuccessUserHandler successUserHandler;
+    @EnableWebSecurity
+    public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+        private final UserDetailsService userDetailsService;
+        private final SuccessUserHandler successUserHandler;
 
-    @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, SuccessUserHandler successUserHandler) {
-        this.userDetailsService = userDetailsService;
-        this.successUserHandler = successUserHandler;
+        @Autowired
+        public WebSecurityConfig(UserDetailsService userDetailsService, SuccessUserHandler successUserHandler) {
+            this.userDetailsService = userDetailsService;
+            this.successUserHandler = successUserHandler;
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .csrf().disable()
+                    .authorizeRequests()
+                    .antMatchers("/api/admin/adminpage/**").hasRole("ADMIN")
+                    .antMatchers("/", "/api/user/userpage").hasAnyRole("ADMIN", "USER")
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .successHandler(successUserHandler)
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .permitAll();
+        }
+
+        @Override
+        public void configure(AuthenticationManagerBuilder amb) throws Exception {
+            amb.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        }
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/admin/adminpage/**").hasRole("ADMIN")
-                .antMatchers("/", "/api/user/userpage").hasAnyRole("ADMIN", "USER")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder amb) throws Exception {
-        amb.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-}
-
-//admin
-//Adminpas123
